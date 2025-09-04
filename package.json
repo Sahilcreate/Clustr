@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:css": "postcss ./public/styles/styles.css -o ./public/styles/build.css --watch",
+    "start": "nodemon app.js",
+    "dev": "concurrently \"npm:build:css\" \"npm:start\""
   },
   "keywords": [],
   "author": "",
