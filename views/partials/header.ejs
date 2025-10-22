@@ -1,0 +1,37 @@
+<div class="header-container bg-white shadow-md border-b">
+  <div class="header-wrapper flex justify-between items-center px-10 py-4">
+    <div
+      class="logo-container flex-none flex items-center text-xl font-bold text-gray-800"
+    >
+      <a href="/" class="hover:text-blue-600 transition-colors"> Clustr </a>
+    </div>
+
+    <!-- Push this container to the right with ml-auto -->
+    <nav class="space-x-4">
+      <% if (!user) { %>
+      <!-- Show when user not logged in -->
+      <a
+        href="/auth/login"
+        class="hover:text-blue-600 transition-colors cursor-pointer"
+      >
+        Login
+      </a>
+      <a
+        href="/auth/register"
+        class="hover:text-blue-600 transition-colors cursor-pointer"
+      >
+        Register
+      </a>
+      <% } else { %>
+      <!-- Show when user IS logged in -->
+      <span class="text-gray-700">Hi, <%= user.name || user.email %></span>
+      <a
+        href="/auth/logout"
+        class="px-4 py-2 border border-gray-400 rounded-lg hover:bg-gray-100 transition"
+      >
+        Logout
+      </a>
+      <% } %>
+    </nav>
+  </div>
+</div>
