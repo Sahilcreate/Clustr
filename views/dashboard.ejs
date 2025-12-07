@@ -1,0 +1,458 @@
+<% const { folders, files, currentFolder, breadcrumb } = content %>
+
+<div class="max-w-4xl mx-auto p-6">
+  <!-- TOP BAR -->
+  <div class="flex items-center justify-between mb-6">
+    <!-- Breadcrumb -->
+    <nav class="text-gray-700 text-sm font-mono">
+      / <% breadcrumb.forEach((b, idx) => { %>
+      <a
+        href="/folders/<%= b.id || '' %>"
+        class="hover:text-blue-600 hover:underline"
+      >
+        <%= b.name %>
+      </a>
+      <% if (idx < breadcrumb.length - 1) { %>
+      <span class="mx-1 text-gray-500">/</span>
+      <% } %> <% }) %>
+    </nav>
+
+    <!-- ACTION BUTTONS -->
+    <div class="flex gap-3">
+      <!-- Add File -->
+      <button
+        onclick="openModal('modal-upload')"
+        id="btn-open-upload"
+        class="cursor-pointer font-semibold border border-gray-400 hover:border-green-600 bg-green-50 hover:bg-green-100 hover:text-green-600 rounded px-4 py-1"
+      >
+        + Upload File
+      </button>
+
+      <!-- Add Folder -->
+      <button
+        onclick="openModal('modal-folder')"
+        id="btn-open-folder"
+        class="cursor-pointer font-semibold border border-gray-400 hover:border-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-600 rounded px-4 py-1"
+      >
+        New Folder
+      </button>
+    </div>
+  </div>
+
+  <!-- BACK BUTTON (only when inside folder) -->
+  <% if (currentFolder) { %>
+  <div
+    class="flex justify-between items-center border border-gray-200 bg-gray-100 px-4 py-3 rounded-md shadow mb-4"
+  >
+    <a
+      href="/folders/<%= currentFolder.parentId || '' %>"
+      class="font-semibold text-lg text-gray-700 hover:underline flex gap-2 align-middle"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        height="24px"
+        viewBox="0 -960 960 960"
+        width="24px"
+        class="fill-black hover:fill-blue-600"
+      >
+        <path
+          d="M320-280 80-520l240-240 57 56-184 184 184 184-57 56Zm480 80v-160q0-50-35-85t-85-35H433l144 144-57 56-240-240 240-240 57 56-144 144h247q83 0 141.5 58.5T880-360v160h-80Z"
+        />
+      </svg>
+      <span>Return</span>
+    </a>
+  </div>
+  <% } %>
+
+  <!-- Folder + File List -->
+  <div>
+    <!-- FOLDERS -->
+    <% folders.forEach(folder => { %>
+    <div
+      class="flex justify-between items-center px-4 py-3 mb-2 rounded bg-white hover:bg-blue-50 hover:shadow"
+    >
+      <a
+        href="/folders/<%= folder.id %>"
+        class="flex items-center gap-3 text-gray-800 font-medium"
+      >
+        <span class="text-2xl">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            class="fill-black hover:fill-yellow-400"
+          >
+            <path
+              d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640v400q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H447l-80-80H160v480Zm0 0v-480 480Z"
+            />
+          </svg>
+        </span>
+        <span class="hover:text-blue-600"><%= folder.name %></span>
+      </a>
+
+      <div class="flex gap-1">
+        <button
+          onclick="openEditModal({
+            modalId: 'modal-folder-edit',
+            id: '<%= folder.id %>',
+            name: '<%= folder.name %>',
+            parentId: '<%= folder.parentId %>'
+        })"
+          class="px-1 py-1 text-sm cursor-pointer"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            class="fill-black hover:fill-green-600"
+          >
+            <path
+              d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"
+            />
+          </svg>
+        </button>
+
+        <a href="/folders/share/<%= folder.id %>" class="px-1 py-1 text-sm">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            class="fill-black hover:fill-blue-600"
+          >
+            <path
+              d="M680-80q-50 0-85-35t-35-85q0-6 3-28L282-392q-16 15-37 23.5t-45 8.5q-50 0-85-35t-35-85q0-50 35-85t85-35q24 0 45 8.5t37 23.5l281-164q-2-7-2.5-13.5T560-760q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35q-24 0-45-8.5T598-672L317-508q2 7 2.5 13.5t.5 14.5q0 8-.5 14.5T317-452l281 164q16-15 37-23.5t45-8.5q50 0 85 35t35 85q0 50-35 85t-85 35Zm0-80q17 0 28.5-11.5T720-200q0-17-11.5-28.5T680-240q-17 0-28.5 11.5T640-200q0 17 11.5 28.5T680-160ZM200-440q17 0 28.5-11.5T240-480q0-17-11.5-28.5T200-520q-17 0-28.5 11.5T160-480q0 17 11.5 28.5T200-440Zm480-280q17 0 28.5-11.5T720-760q0-17-11.5-28.5T680-800q-17 0-28.5 11.5T640-760q0 17 11.5 28.5T680-720Zm0 520ZM200-480Zm480-280Z"
+            />
+          </svg>
+        </a>
+
+        <a href="/folders/delete/<%= folder.id %>" class="px-1 py-1 text-sm">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            class="fill-black hover:fill-red-600"
+          >
+            <path
+              d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"
+            />
+          </svg>
+        </a>
+      </div>
+    </div>
+    <% }) %>
+
+    <!-- FILES -->
+    <% files.forEach(file => { %>
+    <div
+      class="flex justify-between items-center border-b-2 border-b-green-600 px-4 py-3 mb-2 hover:bg-green-50"
+    >
+      <div class="flex items-center gap-3 text-gray-800 hover:cursor-pointer">
+        <span class="text-2xl">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            class="fill-black hover:fill-green-600"
+          >
+            <path
+              d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v240h-80v-200H520v-200H240v640h360v80H240Zm638 15L760-183v89h-80v-226h226v80h-90l118 118-56 57Zm-638-95v-640 640Z"
+            />
+          </svg>
+        </span>
+        <span class="hover:text-green-600"><%= file.originalName %></span>
+      </div>
+
+      <div class="flex gap-1">
+        <a href="/files/edit/<%= file.id %>" class="px-1 py-1 text-sm">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            class="fill-black hover:fill-green-600"
+          >
+            <path
+              d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"
+            />
+          </svg>
+        </a>
+
+        <a href="/files/share/<%= file.id %>" class="px-1 py-1 text-sm">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            class="fill-black hover:fill-blue-600"
+          >
+            <path
+              d="M680-80q-50 0-85-35t-35-85q0-6 3-28L282-392q-16 15-37 23.5t-45 8.5q-50 0-85-35t-35-85q0-50 35-85t85-35q24 0 45 8.5t37 23.5l281-164q-2-7-2.5-13.5T560-760q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35q-24 0-45-8.5T598-672L317-508q2 7 2.5 13.5t.5 14.5q0 8-.5 14.5T317-452l281 164q16-15 37-23.5t45-8.5q50 0 85 35t35 85q0 50-35 85t-85 35Zm0-80q17 0 28.5-11.5T720-200q0-17-11.5-28.5T680-240q-17 0-28.5 11.5T640-200q0 17 11.5 28.5T680-160ZM200-440q17 0 28.5-11.5T240-480q0-17-11.5-28.5T200-520q-17 0-28.5 11.5T160-480q0 17 11.5 28.5T200-440Zm480-280q17 0 28.5-11.5T720-760q0-17-11.5-28.5T680-800q-17 0-28.5 11.5T640-760q0 17 11.5 28.5T680-720Zm0 520ZM200-480Zm480-280Z"
+            />
+          </svg>
+        </a>
+
+        <a href="/files/delete/<%= file.id %>" class="px-1 py-1 text-sm">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            class="fill-black hover:fill-red-600"
+          >
+            <path
+              d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"
+            />
+          </svg>
+        </a>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+</div>
+
+<!-- UPLOAD FILE MODAL -->
+<div
+  id="modal-upload"
+  class="fixed inset-0 hidden bg-black/40 items-center justify-center"
+  onclick="outsideClose(event, 'modal-upload')"
+>
+  <div
+    class="bg-white p-6 rounded-lg w-96 shadow-lg animate-popup"
+    onclick="event.stopPropagation()"
+  >
+    <h2 class="text-xl font-bold mb-4">Upload File</h2>
+
+    <form action="/files/upload" method="POST" enctype="multipart/form-data">
+      <input
+        type="hidden"
+        name="folderId"
+        value="<%= currentFolder ? currentFolder.id  : ''  %>"
+      />
+
+      <input
+        type="file"
+        name="file"
+        required
+        class="w-full text-sm text-gray-600 border rounded p-[2px] file:mr-3 file:py-1 file:px-3 file:border-0 file:rounded file:bg-blue-600 file:text-white file:cursor-pointer mb-2"
+      />
+      <div class="flex font-semibold gap-2">
+        <button
+          type="submit"
+          class="bg-green-50 hover:bg-green-100 border border-gray-400 hover:border-green-600 px-4 py-1 rounded hover:text-green-600 cursor-pointer flex-1"
+        >
+          Upload
+        </button>
+        <button
+          type="button"
+          onclick="closeModal('modal-upload')"
+          class="bg-red-50 hover:bg-red-100 border border-gray-400 hover:border-red-600 px-4 py-1 rounded hover:text-red-600 cursor-pointer flex-1"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- NEW FOLDER MODAL -->
+<div
+  id="modal-folder"
+  class="fixed inset-0 hidden bg-black/40 items-center justify-center"
+  onclick="outsideClose(event, 'modal-folder')"
+>
+  <div
+    class="bg-white p-6 rounded-lg w-96 shadow-lg animate-popup"
+    onclick="event.stopPropagation()"
+  >
+    <h2 class="text-xl font-bold mb-4">Create Folder</h2>
+
+    <form action="/folders/create" method="POST">
+      <input
+        type="hidden"
+        name="parentId"
+        value="<%= currentFolder ? currentFolder.id  : '' %>"
+      />
+
+      <input
+        type="text"
+        name="name"
+        placeholder="Folder name"
+        required
+        class="border py-1 px-4 w-full mb-2 rounded"
+      />
+
+      <div class="flex font-semibold gap-2">
+        <button
+          type="submit"
+          class="bg-blue-50 hover:bg-blue-100 border border-gray-400 hover:border-blue-600 px-4 py-1 rounded hover:text-blue-600 cursor-pointer flex-1"
+        >
+          Create
+        </button>
+        <button
+          type="button"
+          onclick="closeModal('modal-folder')"
+          class="bg-red-50 hover:bg-red-100 border border-gray-400 hover:border-red-600 px-4 py-1 rounded hover:text-red-600 cursor-pointer flex-1"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- EDIT FOLDER MODAL -->
+<div
+  id="modal-folder-edit"
+  class="fixed inset-0 hidden bg-black/40 items-center justify-center"
+  onclick="outsideClose(event, 'modal-folder-edit')"
+>
+  <div
+    class="bg-white p-6 rounded-lg w-96 shadow-lg animate-popup"
+    onclick="event.stopPropagation()"
+  >
+    <h2 class="text-xl font-bold mb-6">Edit Folder</h2>
+
+    <form id="modal-folder-edit-form" class="space-y-2">
+      <!-- <input
+        type="hidden"
+        name="parentId"
+        value="<%= currentFolder ? currentFolder.id  : '' %>"
+      /> -->
+
+      <div class="relative folder-rename-field mb-6">
+        <label for="name" class="absolute text-sm text-gray-600 left-1 -top-5"
+          >Name</label
+        >
+        <input
+          type="text"
+          name="name"
+          placeholder="Folder name"
+          required
+          class="border border-gray-500 py-1 px-4 w-full mb-2 rounded"
+        />
+      </div>
+
+      <div class="relative folder-move-field">
+        <label for="move" class="absolute text-sm text-gray-600 left-1 -top-5"
+          >Move Folder</label
+        >
+        <select
+          name="move"
+          id="folder-move-select"
+          class="border border-gray-500 py-1 px-4 w-full mb-2 rounded"
+        ></select>
+      </div>
+
+      <div class="flex font-semibold gap-2">
+        <button
+          type="submit"
+          class="bg-blue-50 hover:bg-blue-100 border border-gray-400 hover:border-blue-600 px-4 py-1 rounded hover:text-blue-600 cursor-pointer flex-1"
+        >
+          Edit
+        </button>
+        <button
+          type="button"
+          onclick="closeModal('modal-folder-edit')"
+          class="bg-red-50 hover:bg-red-100 border border-gray-400 hover:border-red-600 px-4 py-1 rounded hover:text-red-600 cursor-pointer flex-1"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function openModal(id) {
+    const modal = document.getElementById(id);
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+    modal.querySelector("div").classList.remove("animate-popdown");
+    modal.querySelector("div").classList.add("animate-popup");
+  }
+
+  function closeModal(id) {
+    const modal = document.getElementById(id);
+    const box = modal.querySelector("div");
+    box.classList.remove("animate-popup");
+    box.classList.add("animate-popdown");
+
+    setTimeout(() => modal.classList.add("hidden"), 120);
+  }
+
+  function outsideClose(e, id) {
+    if (e.target.id === id) closeModal(id);
+  }
+
+  async function openEditModal(data) {
+    const modal = document.getElementById(data.modalId);
+    const form = modal.querySelector("#modal-folder-edit-form");
+    const nameInput = form.querySelector("input[name='name']");
+    const moveSelect = form.querySelector("#folder-move-select");
+
+    // Reset old values
+    form.reset();
+    moveSelect.innerHTML = "";
+
+    // Fetch all folders for dropdown
+    const res = await fetch(`/folders/details?excludeDescendantsOf=${data.id}`);
+    if (!res.ok) {
+      throw new Error("Failed to fetch folders");
+    }
+    const { result } = await res.json();
+
+    // Populate dropdown
+    result.forEach((folder) => {
+      const opt = document.createElement("option");
+      opt.value = folder.id;
+      opt.textContent = folder.name;
+      moveSelect.appendChild(opt);
+    });
+
+    // Set Existing Value
+    nameInput.value = data.name;
+    moveSelect.value = data.parentId ?? "";
+
+    // Attach folder id to form (for PUT request later)
+    form.dataset.folderId = data.id;
+    openModal(data.modalId);
+  }
+
+  document
+    .getElementById("modal-folder-edit-form")
+    .addEventListener("submit", submitEditFolder);
+
+  async function submitEditFolder(e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const folderId = form.dataset.folderId;
+
+    const payload = {
+      name: form.name.value.trim(),
+      parentId: form.move.value || null,
+    };
+
+    // console.log(payload.parentId);
+
+    try {
+      const res = await fetch(`/folders/${folderId}/edit`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error(" Failed to update folder");
+
+      closeModal("modal-folder-edit");
+      location.reload();
+    } catch (err) {
+      res.status(500).json({ error: "Internal server error" });
+    }
+  }
+</script>

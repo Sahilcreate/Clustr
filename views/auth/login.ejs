@@ -1,4 +1,13 @@
-<% const {errors} = content %>
+<% const {errors} = content %> <% if (error_msg) { %>
+<div class="alert alert-danger flex justify-center italic text-gray-500 mt-2">
+  <%= error_msg %>
+</div>
+<% } %> <% if (error) { %>
+<div class="alert alert-danger"><%= error %></div>
+<% } %> <% if (success_msg) { %>
+<div class="alert alert-success"><%= success_msg %></div>
+<% } %>
+
 <div class="bg-gray-100 flex flex-col items-center py-10 px-4">
   <% if (errors) { %>
   <div class="bg-red-100 text-red-800 p-3 rounded-md mb-4">

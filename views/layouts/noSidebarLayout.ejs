@@ -12,8 +12,8 @@
     <div class="main flex-grow">
       <div class="content-wrapper">
         <% const contentType = { login: "../auth/login", register:
-        "../auth/register" }[content.type]; %> <%- include(contentType, {
-        content }) %>
+        "../auth/register", dashboard: "../dashboard" }[content.type]; %> <%-
+        include(contentType, { content }) %>
       </div>
     </div>
 

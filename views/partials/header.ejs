@@ -7,7 +7,7 @@
     </div>
 
     <!-- Push this container to the right with ml-auto -->
-    <nav class="space-x-4">
+    <nav class="space-x-4 flex items-center">
       <% if (!user) { %>
       <!-- Show when user not logged in -->
       <a
@@ -25,12 +25,14 @@
       <% } else { %>
       <!-- Show when user IS logged in -->
       <span class="text-gray-700">Hi, <%= user.name || user.email %></span>
-      <a
-        href="/auth/logout"
-        class="px-4 py-2 border border-gray-400 rounded-lg hover:bg-gray-100 transition"
-      >
-        Logout
-      </a>
+      <form action="/auth/logout" method="post">
+        <button
+          class="px-4 py-1 font-semibold border border-gray-400 rounded bg-red-50 hover:bg-red-100 hover:text-red-500 transition cursor-pointer"
+        >
+          Logout
+        </button>
+      </form>
+
       <% } %>
     </nav>
   </div>

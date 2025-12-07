@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles/build.css" />
+    <script defer src="/scripts/dashboard.js"></script>
+    <script type="module" src="/scripts/sidebar.js"></script>
+  </head>
+  <body class="min-h-screen flex flex-col bg-gray-100">
+    <%- include('../partials/header') %>
+
+    <div class="flex flex-grow overflow-hidden">
+      <aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
+        <%- include('../partials/sidebar', {content}) %>
+      </aside>
+
+      <main class="flex-grow p-6 overflow-auto">
+        <div class="content-wrapper">
+          <% const contentType = { dashboard:
+          "../dashboard/index"}[content.type]; %> <% if (contentType) { %> <%-
+          include(contentType, { content }) %> <% } else { %>
+          <p class="text-gray-500">Content not found.</p>
+          <% } %>
+        </div>
+      </main>
+    </div>
+
+    <%- include('../partials/footer') %>
+  </body>
+</html>
