@@ -37,43 +37,58 @@ model Folder {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Relationship with User
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int
 
-  parent     Folder?  @relation("Subfolders", fields: [parentId], references: [id])
+  // Self-realtion for nested folders
+  parent     Folder?  @relation("Subfolders", fields: [parentId], references: [id], onDelete: Cascade)
   parentId   Int?
   subfolders Folder[] @relation("Subfolders")
 
-  files     File[]
+  // Files inside the folder
+  files File[]
+
+  // Folder can have a share link (optional)
   shareLink ShareLink?
 }
 
 model File {
-  id        Int      @id @default(autoincrement())
-  name      String
-  size      Int
-  mimeType  String?
-  url       String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           Int      @id @default(autoincrement())
+  originalName String // original file name uploaded by user
+  storedName   String //filename saved on disk or cloud bucked
+  path         String // local filesystem path OR cloud bucked path
+  size         Int
+  mimeType     String?
+  url          String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
+  // File belongs to user
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int
 
+  // File belongs to Folder (optional)
   folder   Folder? @relation(fields: [folderId], references: [id], onDelete: Cascade)
   folderId Int?
 
+  // Each file can have its own share link (optioanl) 
   shareLink ShareLink?
 }
 
 model ShareLink {
   id        String   @id @default(uuid())
-  file      File     @relation(fields: [fileId], references: [id], onDelete: Cascade)
-  fileId    Int      @unique
-  folder    Folder?  @relation(fields: [folderId], references: [id], onDelete: Cascade)
-  folderId  Int?     @unique
+  token     String   @unique
   expiresAt DateTime
   createdAt DateTime @default(now())
+
+  // File sharing  (one share link per file)
+  file   File? @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  fileId Int?  @unique
+
+  // Folder sharing (one share link per folder)
+  folder   Folder? @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  folderId Int?    @unique
 }
 
 model Session {
@@ -81,6 +96,7 @@ model Session {
   sid       String   @unique
   data      String
   expiresAt DateTime
-  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int?
+
+  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int?
 }
