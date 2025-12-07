@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const { controllers } = require("../controllers/index");
 const { body } = require("express-validator");
+const passport = require("passport");
 
 const authRouter = Router();
 
@@ -20,14 +21,21 @@ authRouter.post(
     .withMessage("Confirmation field not matching"),
   body("email")
     .exists()
-    .withMessage("email is required")
+    .withMessage("Email is required")
     .isEmail()
-    .withMessage("email not valid"),
+    .withMessage("Email not valid"),
   controllers.postRegister
 );
 
 authRouter.get("/login", controllers.getLogin);
-authRouter.post("/login", controllers.postLogin);
+authRouter.post(
+  "/login",
+  passport.authenticate("local", {
+    successRedirect: "/folders",
+    failureRedirect: "/auth/login",
+    failureFlash: true,
+  })
+);
 
 authRouter.post("/logout", controllers.logout);
 

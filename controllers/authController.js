@@ -2,7 +2,6 @@ const bcrypt = require("bcryptjs");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { validationResult } = require("express-validator");
-const passport = require("passport");
 
 async function getRegister(req, res) {
   res.render("layouts/noSidebarLayout", {
@@ -16,7 +15,7 @@ async function getRegister(req, res) {
 async function postRegister(req, res, next) {
   const errors = validationResult(req);
 
-  if (!errors.isEmpty) {
+  if (!errors.isEmpty()) {
     return res.render("layouts/noSidebarLayout", {
       title: "Register",
       content: {
@@ -42,6 +41,8 @@ async function postRegister(req, res, next) {
         password: hashedPassword,
       },
     });
+
+    res.redirect("/auth/login");
   } catch {
     console.error(err);
     next(err);
@@ -57,12 +58,12 @@ async function getLogin(req, res) {
   });
 }
 
-async function postLogin(req, res) {
-  passport.authenticate("local", {
-    successRedirect: "/dashboard",
-    failureRedirect: "/login",
-  });
-}
+// async function postLogin(req, res) {
+//   passport.authenticate("local", {
+//     successRedirect: "/dashboard",
+//     failureRedirect: "/login",
+//   });
+// }
 
 async function logout(req, res, next) {
   req.logout((err) => {
@@ -77,6 +78,6 @@ module.exports = {
   getRegister,
   postRegister,
   getLogin,
-  postLogin,
+  // postLogin,
   logout,
 };
