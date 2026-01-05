@@ -48,17 +48,7 @@
       href="/folders/<%= currentFolder.parentId || '' %>"
       class="font-semibold text-lg text-gray-700 hover:underline flex gap-2 align-middle"
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        height="24px"
-        viewBox="0 -960 960 960"
-        width="24px"
-        class="fill-black hover:fill-blue-600"
-      >
-        <path
-          d="M320-280 80-520l240-240 57 56-184 184 184 184-57 56Zm480 80v-160q0-50-35-85t-85-35H433l144 144-57 56-240-240 240-240 57 56-144 144h247q83 0 141.5 58.5T880-360v160h-80Z"
-        />
-      </svg>
+      <%- include('./partials/icons/return.ejs') %>
       <span>Return</span>
     </a>
   </div>
@@ -69,78 +59,42 @@
     <!-- FOLDERS -->
     <% folders.forEach(folder => { %>
     <div
-      class="flex justify-between items-center px-4 py-3 mb-2 rounded bg-white hover:bg-blue-50 hover:shadow"
+      class="folder-card flex justify-between items-center px-4 py-3 mb-2 rounded bg-white hover:bg-blue-50 hover:shadow"
+      data-id="<%= folder.id %>"
+      data-name="<%= folder.name %>"
+      data-parent="<%= folder.parentId %>"
     >
       <a
         href="/folders/<%= folder.id %>"
         class="flex items-center gap-3 text-gray-800 font-medium"
       >
         <span class="text-2xl">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="24px"
-            viewBox="0 -960 960 960"
-            width="24px"
-            class="fill-black hover:fill-yellow-400"
-          >
-            <path
-              d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640v400q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H447l-80-80H160v480Zm0 0v-480 480Z"
-            />
-          </svg>
+          <%- include('./partials/icons/folder') %>
         </span>
         <span class="hover:text-blue-600"><%= folder.name %></span>
       </a>
 
       <div class="flex gap-1">
         <button
-          onclick="openEditModal({
-            modalId: 'modal-folder-edit',
-            id: '<%= folder.id %>',
-            name: '<%= folder.name %>',
-            parentId: '<%= folder.parentId %>'
-        })"
+          onclick="openFolderEditModal(event,'modal-folder-edit')"
           class="px-1 py-1 text-sm cursor-pointer"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="24px"
-            viewBox="0 -960 960 960"
-            width="24px"
-            class="fill-black hover:fill-green-600"
-          >
-            <path
-              d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"
-            />
-          </svg>
+          <%- include('./partials/icons/edit') %>
         </button>
 
-        <a href="/folders/share/<%= folder.id %>" class="px-1 py-1 text-sm">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="24px"
-            viewBox="0 -960 960 960"
-            width="24px"
-            class="fill-black hover:fill-blue-600"
-          >
-            <path
-              d="M680-80q-50 0-85-35t-35-85q0-6 3-28L282-392q-16 15-37 23.5t-45 8.5q-50 0-85-35t-35-85q0-50 35-85t85-35q24 0 45 8.5t37 23.5l281-164q-2-7-2.5-13.5T560-760q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35q-24 0-45-8.5T598-672L317-508q2 7 2.5 13.5t.5 14.5q0 8-.5 14.5T317-452l281 164q16-15 37-23.5t45-8.5q50 0 85 35t35 85q0 50-35 85t-85 35Zm0-80q17 0 28.5-11.5T720-200q0-17-11.5-28.5T680-240q-17 0-28.5 11.5T640-200q0 17 11.5 28.5T680-160ZM200-440q17 0 28.5-11.5T240-480q0-17-11.5-28.5T200-520q-17 0-28.5 11.5T160-480q0 17 11.5 28.5T200-440Zm480-280q17 0 28.5-11.5T720-760q0-17-11.5-28.5T680-800q-17 0-28.5 11.5T640-760q0 17 11.5 28.5T680-720Zm0 520ZM200-480Zm480-280Z"
-            />
-          </svg>
-        </a>
+        <button
+          onclick="openShareFolderModal(event, 'modal-folder-share')"
+          class="px-1 py-1 text-sm cursor-pointer"
+        >
+          <%- include('./partials/icons/share') %>
+        </button>
 
-        <a href="/folders/delete/<%= folder.id %>" class="px-1 py-1 text-sm">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="24px"
-            viewBox="0 -960 960 960"
-            width="24px"
-            class="fill-black hover:fill-red-600"
-          >
-            <path
-              d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"
-            />
-          </svg>
-        </a>
+        <button
+          onclick="openDeleteModal(event, 'modal-folder-delete')"
+          class="px-1 py-1 text-sm cursor-pointer"
+        >
+          <%- include('./partials/icons/delete') %>
+        </button>
       </div>
     </div>
     <% }) %>
@@ -148,67 +102,43 @@
     <!-- FILES -->
     <% files.forEach(file => { %>
     <div
-      class="flex justify-between items-center border-b-2 border-b-green-600 px-4 py-3 mb-2 hover:bg-green-50"
+      class="file-card flex justify-between items-center border-b-2 border-b-green-600 px-4 py-3 mb-2 hover:bg-green-50"
+      data-id="<%= file.id %>"
+      data-name="<%= file.nameWithoutExt %>"
+      data-folder="<%= file.folderId %>"
     >
-      <div class="flex items-center gap-3 text-gray-800 hover:cursor-pointer">
-        <span class="text-2xl">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="24px"
-            viewBox="0 -960 960 960"
-            width="24px"
-            class="fill-black hover:fill-green-600"
-          >
-            <path
-              d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v240h-80v-200H520v-200H240v640h360v80H240Zm638 15L760-183v89h-80v-226h226v80h-90l118 118-56 57Zm-638-95v-640 640Z"
-            />
-          </svg>
-        </span>
-        <span class="hover:text-green-600"><%= file.originalName %></span>
+      <div
+        class="flex items-center gap-3 text-gray-800 hover:cursor-pointer"
+        onclick="openFileInfoModal(event, 'modal-file-info')"
+      >
+        <span class="text-2xl"> <%- include('./partials/icons/file') %> </span>
+        <span class="hover:text-green-600"><%= file.nameWithoutExt %></span>
+        <span class="border rounded text-xs py-0.5 px-1 bg-gray-50 shadow"
+          ><%= file.mimeType %></span
+        >
       </div>
 
       <div class="flex gap-1">
-        <a href="/files/edit/<%= file.id %>" class="px-1 py-1 text-sm">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="24px"
-            viewBox="0 -960 960 960"
-            width="24px"
-            class="fill-black hover:fill-green-600"
-          >
-            <path
-              d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"
-            />
-          </svg>
-        </a>
+        <button
+          onclick="openFileEditModal(event, 'modal-file-edit')"
+          class="px-1 py-1 text-sm cursor-pointer"
+        >
+          <%- include('./partials/icons/edit') %>
+        </button>
 
-        <a href="/files/share/<%= file.id %>" class="px-1 py-1 text-sm">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="24px"
-            viewBox="0 -960 960 960"
-            width="24px"
-            class="fill-black hover:fill-blue-600"
-          >
-            <path
-              d="M680-80q-50 0-85-35t-35-85q0-6 3-28L282-392q-16 15-37 23.5t-45 8.5q-50 0-85-35t-35-85q0-50 35-85t85-35q24 0 45 8.5t37 23.5l281-164q-2-7-2.5-13.5T560-760q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35q-24 0-45-8.5T598-672L317-508q2 7 2.5 13.5t.5 14.5q0 8-.5 14.5T317-452l281 164q16-15 37-23.5t45-8.5q50 0 85 35t35 85q0 50-35 85t-85 35Zm0-80q17 0 28.5-11.5T720-200q0-17-11.5-28.5T680-240q-17 0-28.5 11.5T640-200q0 17 11.5 28.5T680-160ZM200-440q17 0 28.5-11.5T240-480q0-17-11.5-28.5T200-520q-17 0-28.5 11.5T160-480q0 17 11.5 28.5T200-440Zm480-280q17 0 28.5-11.5T720-760q0-17-11.5-28.5T680-800q-17 0-28.5 11.5T640-760q0 17 11.5 28.5T680-720Zm0 520ZM200-480Zm480-280Z"
-            />
-          </svg>
-        </a>
+        <button
+          onclick="openShareFileModal(event, 'modal-file-share')"
+          class="px-1 py-1 text-sm cursor-pointer"
+        >
+          <%- include('./partials/icons/share')%>
+        </button>
 
-        <a href="/files/delete/<%= file.id %>" class="px-1 py-1 text-sm">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="24px"
-            viewBox="0 -960 960 960"
-            width="24px"
-            class="fill-black hover:fill-red-600"
-          >
-            <path
-              d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"
-            />
-          </svg>
-        </a>
+        <button
+          onclick="openDeleteModal(event, 'modal-file-delete')"
+          class="px-1 py-1 text-sm cursor-pointer"
+        >
+          <%- include('./partials/icons/delete') %>
+        </button>
       </div>
     </div>
     <% }) %>
@@ -218,21 +148,27 @@
 <!-- UPLOAD FILE MODAL -->
 <div
   id="modal-upload"
-  class="fixed inset-0 hidden bg-black/40 items-center justify-center"
+  class="modal-card fixed inset-0 hidden bg-black/40 items-center justify-center"
   onclick="outsideClose(event, 'modal-upload')"
+  style="z-index: 2"
 >
   <div
     class="bg-white p-6 rounded-lg w-96 shadow-lg animate-popup"
     onclick="event.stopPropagation()"
   >
+    <div class="modal-errors"></div>
     <h2 class="text-xl font-bold mb-4">Upload File</h2>
 
-    <form action="/files/upload" method="POST" enctype="multipart/form-data">
-      <input
+    <form
+      id="modal-file-upload-form"
+      enctype="multipart/form-data"
+      data-folder="<%= currentFolder ? currentFolder.id : ''%>"
+    >
+      <!-- <input
         type="hidden"
         name="folderId"
         value="<%= currentFolder ? currentFolder.id  : ''  %>"
-      />
+      /> -->
 
       <input
         type="file"
@@ -262,8 +198,9 @@
 <!-- NEW FOLDER MODAL -->
 <div
   id="modal-folder"
-  class="fixed inset-0 hidden bg-black/40 items-center justify-center"
+  class="modal-card fixed inset-0 hidden bg-black/40 items-center justify-center"
   onclick="outsideClose(event, 'modal-folder')"
+  style="z-index: 2"
 >
   <div
     class="bg-white p-6 rounded-lg w-96 shadow-lg animate-popup"
@@ -308,8 +245,9 @@
 <!-- EDIT FOLDER MODAL -->
 <div
   id="modal-folder-edit"
-  class="fixed inset-0 hidden bg-black/40 items-center justify-center"
+  class="modal-card fixed inset-0 hidden bg-black/40 items-center justify-center"
   onclick="outsideClose(event, 'modal-folder-edit')"
+  style="z-index: 2"
 >
   <div
     class="bg-white p-6 rounded-lg w-96 shadow-lg animate-popup"
@@ -367,7 +305,395 @@
   </div>
 </div>
 
+<!-- EDIT FILE MODAL -->
+<div
+  id="modal-file-edit"
+  class="modal-card fixed inset-0 hidden bg-black/40 items-center justify-center"
+  onclick="outsideClose(event, 'modal-file-edit')"
+  style="z-index: 2"
+>
+  <div
+    class="bg-white p-6 rounded-lg w-96 shadow-lg animate-popup"
+    onclick="event.stopPropagation()"
+  >
+    <div class="modal-errors mb-4"></div>
+    <h2 class="text-xl font-bold mb-6">Edit Folder</h2>
+
+    <form id="modal-file-edit-form" class="space-y-2">
+      <!-- <input
+        type="hidden"
+        name="parentId"
+        value="<%= currentFolder ? currentFolder.id  : '' %>"
+      /> -->
+
+      <div class="relative file-rename-field mb-6">
+        <label for="name" class="absolute text-sm text-gray-600 left-1 -top-5"
+          >Name</label
+        >
+        <input
+          type="text"
+          name="name"
+          placeholder="File name"
+          required
+          class="border border-gray-500 py-1 px-4 w-full mb-2 rounded"
+        />
+      </div>
+
+      <div class="relative file-move-field">
+        <label for="move" class="absolute text-sm text-gray-600 left-1 -top-5"
+          >Move File</label
+        >
+        <select
+          name="move"
+          id="file-move-select"
+          class="border border-gray-500 py-1 px-4 w-full mb-2 rounded"
+        ></select>
+      </div>
+
+      <div class="flex font-semibold gap-2">
+        <button
+          type="submit"
+          class="bg-blue-50 hover:bg-blue-100 border border-gray-400 hover:border-blue-600 px-4 py-1 rounded hover:text-blue-600 cursor-pointer flex-1"
+        >
+          Edit
+        </button>
+        <button
+          type="button"
+          onclick="closeModal('modal-file-edit')"
+          class="bg-red-50 hover:bg-red-100 border border-gray-400 hover:border-red-600 px-4 py-1 rounded hover:text-red-600 cursor-pointer flex-1"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- DELETE FOLDER MODAL -->
+<div
+  id="modal-folder-delete"
+  class="modal-card fixed inset-0 hidden bg-black/40 items-center justify-center"
+  onclick="outsideClose(event, 'modal-folder-delete')"
+  style="z-index: 2"
+>
+  <div
+    class="bg-white p-6 rounded-lg w-96 shadow-lg animate-popup"
+    onclick="event.stopPropagation()"
+  >
+    <h2 class="text-xl font-bold mb-6 gap-2 flex align-middle justify-center">
+      <%- include('./partials/icons/alert')%>
+      <span class="font-semibold text-red-600">Are you sure?</span>
+    </h2>
+    <div class="flex mb-4 text-center">
+      This will delete all subfolders and files inside this folder!
+    </div>
+    <div class="flex font-semibold gap-2">
+      <button
+        type="button"
+        onclick="closeModal('modal-folder-delete')"
+        class="bg-blue-50 hover:bg-blue-100 border border-gray-400 hover:border-blue-600 px-4 py-1 rounded hover:text-blue-600 cursor-pointer flex-1"
+      >
+        Cancel
+      </button>
+      <button
+        type="button"
+        onclick="submitDeleteFolder(event)"
+        class="bg-red-50 hover:bg-red-100 border border-gray-400 hover:border-red-600 px-4 py-1 rounded hover:text-red-600 cursor-pointer flex-1"
+      >
+        Delete
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE FILE MODAL -->
+<div
+  id="modal-file-delete"
+  class="modal-card fixed inset-0 hidden bg-black/40 items-center justify-center"
+  onclick="outsideClose(event, 'modal-file-delete')"
+  style="z-index: 2"
+>
+  <div
+    class="bg-white p-6 rounded-lg w-96 shadow-lg animate-popup"
+    onclick="event.stopPropagation()"
+  >
+    <h2 class="text-xl font-bold mb-6 gap-2 flex align-middle justify-center">
+      <%- include('./partials/icons/alert') %>
+      <span class="font-semibold text-red-600">Are you sure?</span>
+    </h2>
+    <div class="flex mb-4 text-center">This action cannot be undone!</div>
+    <div class="flex font-semibold gap-2">
+      <button
+        type="button"
+        onclick="closeModal('modal-file-delete')"
+        class="bg-blue-50 hover:bg-blue-100 border border-gray-400 hover:border-blue-600 px-4 py-1 rounded hover:text-blue-600 cursor-pointer flex-1"
+      >
+        Cancel
+      </button>
+      <button
+        type="button"
+        onclick="submitDeleteFile(event)"
+        class="bg-red-50 hover:bg-red-100 border border-gray-400 hover:border-red-600 px-4 py-1 rounded hover:text-red-600 cursor-pointer flex-1"
+      >
+        Delete
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- FILE INFO MODAL -->
+<div
+  id="modal-file-info"
+  class="modal-card fixed hidden inset-0 bg-black/40 items-center justify-center"
+  onclick="outsideClose(event, 'modal-file-info')"
+>
+  <div
+    class="bg-white h-full p-6 w-1/2 min-w-xl fixed top-0 right-0 shadow-lg animate-popup"
+    onclick="event.stopPropagation()"
+  >
+    <div class="modal-errors mb-4"></div>
+    <h2
+      class="file-card text-2xl font-bold flex gap-2 align-middle justify-between mb-6 border-b-2 border-b-black text-green-600"
+    >
+      <span>File Info</span>
+      <div class="file-info-btns flex gap-1">
+        <button
+          onclick="openFileEditModal(event, 'modal-file-edit')"
+          class="px-1 py-1 text-sm cursor-pointer"
+        >
+          <%- include('./partials/icons/edit') %>
+        </button>
+
+        <button
+          onclick="openShareFileModal(event, 'modal-file-share')"
+          class="px-1 py-1 text-sm cursor-pointer"
+        >
+          <%- include('./partials/icons/share') %>
+        </button>
+
+        <a class="download-link px-1 py-1 text-sm">
+          <%- include('./partials/icons/download') %>
+        </a>
+
+        <button
+          onclick="openDeleteModal(event, 'modal-file-delete')"
+          class="px-1 py-1 text-sm cursor-pointer"
+        >
+          <%- include('./partials/icons/delete') %>
+        </button>
+      </div>
+    </h2>
+    <div class="space-y-2">
+      <div class="flex gap-2">
+        <span class="font-semibold text-green-600">Name:</span>
+        <span id="file-info-name" class="whitespace-normal text-wrap"
+          >whatever</span
+        >
+      </div>
+      <div class="flex gap-2">
+        <span class="font-semibold text-green-600">Size:</span>
+        <span id="file-info-size">very big</span>
+      </div>
+      <div class="flex gap-2">
+        <span class="font-semibold text-green-600">Mime Type:</span>
+        <span id="file-info-mime">giphy-flify</span>
+      </div>
+      <div class="flex gap-2">
+        <span class="font-semibold text-green-600">Created At:</span>
+        <span id="file-info-created">Long Ago...</span>
+      </div>
+      <div class="flex gap-2">
+        <span class="font-semibold text-green-600">Updated At:</span>
+        <span id="file-info-updated">that too long ago</span>
+      </div>
+      <div class="flex gap-2">
+        <span class="font-semibold text-green-600">Sharelink:</span>
+        <span id="file-info-share" class="break-all">
+          option available at premium subscription just at $1000
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOLDER SHARE MODAL -->
+<div
+  id="modal-folder-share"
+  class="modal-card fixed hidden inset-0 bg-black/40 items-center justify-center z-10"
+  onclick="outsideClose(event, 'modal-folder-share')"
+>
+  <div class="bg-white p-6 w-96 rounded-lg shadow-lg animate-popup space-y-12">
+    <div class="modal-errors mb-4"></div>
+    <h2 class="text-xl font-bold mb-8">Share Folder</h2>
+    <div class="folder-share-field relative">
+      <div class="absolute -top-5 left-0 text-sm text-gray-600">Link:</div>
+      <div
+        class="folder-share-box w-full break-all whitespace-normal overflow-hidden px-4 py-1 rounded border border-gray-600"
+      >
+        random link
+      </div>
+    </div>
+    <div class="folder-share-field relative">
+      <div class="absolute -top-5 left-0 text-sm text-gray-600">Expire on:</div>
+      <div
+        class="folder-expire-box w-full break-all whitespace-normal overflow-hidden px-4 py-1 rounded border border-gray-600"
+      >
+        random date
+      </div>
+    </div>
+    <form id="modal-folder-share-form" class="space-y-6">
+      <div class="folder-share-time relative">
+        <label
+          for="share-time"
+          class="absolute left-0 -top-5 text-sm text-gray-600"
+          >Expire in (days):</label
+        >
+        <input
+          type="number"
+          min="1"
+          max="10"
+          name="shareTime"
+          placeholder="1"
+          required
+          id="folder-share-input"
+          class="bg-white border rounded pl-4 py-1 w-full text-black"
+        />
+      </div>
+      <div class="flex font-semibold gap-2">
+        <button
+          type="submit"
+          id="share-submit-btn"
+          class="bg-blue-50 hover:bg-blue-100 border border-gray-400 hover:border-blue-600 px-4 py-1 rounded hover:text-blue-600 cursor-pointer flex-1"
+        >
+          Create
+        </button>
+        <button
+          type="button"
+          onclick="closeModal('modal-folder-share')"
+          class="bg-red-50 hover:bg-red-100 border border-gray-400 hover:border-red-600 px-4 py-1 rounded hover:text-red-600 cursor-pointer flex-1"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- FILE SHARE MODAL -->
+<div
+  id="modal-file-share"
+  class="modal-card fixed hidden inset-0 bg-black/40 items-center justify-center z-10"
+  onclick="outsideClose(event, 'modal-file-share')"
+>
+  <div class="bg-white p-6 w-96 rounded-lg shadow-lg animate-popup space-y-12">
+    <div class="modal-errors mb-4"></div>
+    <h2 class="text-xl font-bold mb-8">Share File</h2>
+    <div class="file-share-field relative">
+      <div class="absolute -top-5 left-0 text-sm text-gray-600">Link:</div>
+      <div
+        class="file-share-box w-full break-all whitespace-normal overflow-hidden px-4 py-1 rounded border border-gray-600"
+      >
+        random link
+      </div>
+    </div>
+    <div class="file-share-field relative">
+      <div class="absolute -top-5 left-0 text-sm text-gray-600">Expire on:</div>
+      <div
+        class="file-expire-box w-full break-all whitespace-normal overflow-hidden px-4 py-1 rounded border border-gray-600"
+      >
+        random date
+      </div>
+    </div>
+    <form id="modal-file-share-form" class="space-y-6">
+      <div class="file-share-time relative">
+        <label
+          for="share-time"
+          class="absolute left-0 -top-5 text-sm text-gray-600"
+          >Expire in (days):</label
+        >
+        <input
+          type="number"
+          min="1"
+          max="10"
+          name="shareTime"
+          placeholder="1"
+          required
+          id="file-share-input"
+          class="bg-white border rounded pl-4 py-1 w-full text-black"
+        />
+      </div>
+      <div class="flex font-semibold gap-2">
+        <button
+          type="submit"
+          id="share-submit-btn"
+          class="bg-blue-50 hover:bg-blue-100 border border-gray-400 hover:border-blue-600 px-4 py-1 rounded hover:text-blue-600 cursor-pointer flex-1"
+        >
+          Create
+        </button>
+        <button
+          type="button"
+          onclick="closeModal('modal-file-share')"
+          class="bg-red-50 hover:bg-red-100 border border-gray-400 hover:border-red-600 px-4 py-1 rounded hover:text-red-600 cursor-pointer flex-1"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
+  document
+    .getElementById("modal-file-upload-form")
+    .addEventListener("submit", submitUploadFile);
+
+  document
+    .getElementById("modal-folder-edit-form")
+    .addEventListener("submit", submitEditFolder);
+
+  document
+    .getElementById("modal-file-edit-form")
+    .addEventListener("submit", submitEditFile);
+
+  document
+    .getElementById("modal-file-share-form")
+    .addEventListener("submit", submitShareFile);
+
+  document
+    .getElementById("modal-folder-share-form")
+    .addEventListener("submit", submitShareFolder);
+
+  function bytesToMb(bytes) {
+    if (typeof bytes !== "number" || isNaN(bytes) || bytes < 0) {
+      return "0 MB";
+    }
+
+    const megabytes = bytes / (1024 * 1024);
+
+    return `${parseFloat(megabytes.toFixed(2))} MB`;
+  }
+
+  function dateToString(dateString) {
+    console.log("date: ", dateString, typeof dateString);
+
+    const date = new Date(dateString);
+
+    return date.toUTCString();
+  }
+
+  function showModalErrors(modalId, errors) {
+    const modal = document.getElementById(modalId);
+    const errorBox = modal.querySelector(".modal-errors");
+
+    if (!errorBox) return;
+
+    errorBox.innerHTML = errors
+      .map(
+        (err) => `<div class="error-text text-sm text-red-600"> > ${err}</div>`
+      )
+      .join("");
+  }
+
   function openModal(id) {
     const modal = document.getElementById(id);
     modal.classList.remove("hidden");
@@ -389,18 +715,130 @@
     if (e.target.id === id) closeModal(id);
   }
 
-  async function openEditModal(data) {
-    const modal = document.getElementById(data.modalId);
+  async function openShareFileModal(event, modalId) {
+    const modal = document.getElementById(modalId);
+
+    const form = modal.querySelector("form");
+    const linkBox = modal.querySelector(".file-share-box");
+    const expireBox = modal.querySelector(".file-expire-box");
+    const btn = modal.querySelector("#share-submit-btn");
+    const expiryInput = modal.querySelector("#file-share-input");
+    modal.querySelector(".modal-errors").innerHTML = "";
+
+    const fileCard = event.target.closest(".file-card");
+    const fileId = fileCard.dataset.id;
+
+    const res = await fetch(`/files/${fileId}/share`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      showModalErrors("modal-file-share", data.errors);
+    }
+
+    if (data.token) {
+      fileCard.dataset.shareUrl = data.shareUrl;
+    } else {
+      fileCard.dataset.shareUrl = "";
+    }
+
+    console.log(data);
+
+    const shareUrl = fileCard.dataset.shareUrl ?? null;
+
+    form.reset();
+    form.dataset.fileId = fileId;
+    form.dataset.hasShareLink = shareUrl ? "true" : "false";
+
+    if (shareUrl) {
+      linkBox.textContent = shareUrl;
+      expireBox.textContent = data.expiresAt;
+      btn.textContent = "Revoke";
+      expiryInput.disabled = true;
+    } else {
+      linkBox.textContent = "—";
+      expireBox.textContent = "—";
+      btn.textContent = "Create";
+      expiryInput.disabled = false;
+    }
+
+    openModal(modalId);
+  }
+
+  async function openShareFolderModal(event, modalId) {
+    const modal = document.getElementById(modalId);
+
+    const form = modal.querySelector("form");
+    const linkBox = modal.querySelector(".folder-share-box");
+    const expireBox = modal.querySelector(".folder-expire-box");
+    const btn = modal.querySelector("#share-submit-btn");
+    const expiryInput = modal.querySelector("#folder-share-input");
+    modal.querySelector(".modal-errors").innerHTML = "";
+
+    const folderCard = event.target.closest(".folder-card");
+    const folderId = folderCard.dataset.id;
+    // console.log(folderId);
+
+    const res = await fetch(`/folders/${folderId}/share`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      showModalErrors("modal-folder-share", data.errors);
+    }
+
+    console.log(data);
+
+    if (data.token) {
+      folderCard.dataset.shareUrl = data.shareUrl;
+    } else {
+      folderCard.dataset.shareUrl = "";
+    }
+
+    const shareUrl = folderCard.dataset.shareUrl ?? null;
+
+    form.reset();
+    form.dataset.folderId = folderId;
+    form.dataset.hasShareLink = shareUrl ? "true" : "false";
+
+    if (shareUrl) {
+      linkBox.textContent = shareUrl;
+      expireBox.textContent = data.expiresAt;
+      btn.textContent = "Revoke";
+      expiryInput.disabled = true;
+    } else {
+      linkBox.textContent = "—";
+      expireBox.textContent = "—";
+      btn.textContent = "Create";
+      expiryInput.disabled = false;
+    }
+
+    openModal(modalId);
+  }
+
+  async function openFolderEditModal(event, modalId) {
+    const modal = document.getElementById(modalId);
     const form = modal.querySelector("#modal-folder-edit-form");
     const nameInput = form.querySelector("input[name='name']");
     const moveSelect = form.querySelector("#folder-move-select");
+
+    const folderCard = event.target.closest(".folder-card");
+    const folderId = folderCard.dataset.id;
+    const folderName = folderCard.dataset.name;
+    const folderParentId = folderCard.dataset.parent;
 
     // Reset old values
     form.reset();
     moveSelect.innerHTML = "";
 
     // Fetch all folders for dropdown
-    const res = await fetch(`/folders/details?excludeDescendantsOf=${data.id}`);
+    const res = await fetch(
+      `/folders/details?excludeDescendantsOf=${folderId}`
+    );
     if (!res.ok) {
       throw new Error("Failed to fetch folders");
     }
@@ -415,22 +853,167 @@
     });
 
     // Set Existing Value
-    nameInput.value = data.name;
-    moveSelect.value = data.parentId ?? "";
+    nameInput.value = folderName;
+    moveSelect.value = folderParentId ?? "";
 
     // Attach folder id to form (for PUT request later)
-    form.dataset.folderId = data.id;
-    openModal(data.modalId);
+    form.dataset.folderId = folderId;
+    openModal(modalId);
   }
 
-  document
-    .getElementById("modal-folder-edit-form")
-    .addEventListener("submit", submitEditFolder);
+  async function openFileInfoModal(event, modalId) {
+    const modal = document.getElementById(modalId);
+    const errorBox = modal.querySelector(".modal-errors");
+    const fileInfoName = modal.querySelector("#file-info-name");
+    const fileInfoSize = modal.querySelector("#file-info-size");
+    const fileInfoMime = modal.querySelector("#file-info-mime");
+    const fileInfoCreated = modal.querySelector("#file-info-created");
+    const fileInfoUpdated = modal.querySelector("#file-info-updated");
+    const fileInfoShare = modal.querySelector("#file-info-share");
+    const newFileCard = modal.querySelector(".file-card");
+    const downloadLink = modal.querySelector(".download-link");
 
-  async function submitEditFolder(e) {
-    e.preventDefault();
+    const fileCard = event.target.closest(".file-card");
+    const fileId = fileCard.dataset.id;
+    const fileName = fileCard.dataset.name;
+    const fileFolderId = fileCard.dataset.folder;
 
-    const form = e.target;
+    errorBox.innerHTML = "";
+
+    // console.log(fileId);
+
+    const res = await fetch(`/files/${fileId}`);
+    const data = await res.json();
+
+    // console.log(data);
+
+    openModal(modalId);
+
+    if (!res.ok) {
+      return showModalErrors("modal-file-info", data.errors);
+    }
+
+    const { file } = data;
+    newFileCard.dataset.id = file.id;
+    newFileCard.dataset.name = file.nameWithoutExt;
+    newFileCard.dataset.folder = file.folderId ?? "";
+    downloadLink.href = `/files/${file.id}/download`;
+
+    fileInfoName.textContent = file.nameWithoutExt;
+    fileInfoSize.textContent = bytesToMb(Number(file.size));
+    fileInfoMime.textContent = file.mimeType;
+    fileInfoCreated.textContent = dateToString(String(file.createdAt));
+    fileInfoUpdated.textContent = dateToString(String(file.updatedAt));
+    fileInfoShare.textContent = file.shareUrl ? file.shareUrl : "-----";
+  }
+
+  async function openFileEditModal(event, modalId) {
+    const modal = document.getElementById(modalId);
+    const errorBox = modal.querySelector(".modal-errors");
+    const form = modal.querySelector("#modal-file-edit-form");
+    const nameInput = form.querySelector("input[name='name']");
+    const moveSelect = form.querySelector("#file-move-select");
+
+    const fileCard = event.target.closest(".file-card");
+    const fileId = fileCard.dataset.id;
+    const fileName = fileCard.dataset.name;
+    const fileFolderId = fileCard.dataset.folder;
+
+    // Reset old values
+    form.reset();
+    moveSelect.innerHTML = "";
+    errorBox.innerHTML = "";
+
+    // Fetch all folders for dropdown
+    const res = await fetch(`/folders/details`);
+    if (!res.ok) {
+      throw new Error("Failed to fetch folders");
+    }
+    const { result } = await res.json();
+
+    // Populate dropdown
+    result.forEach((folder) => {
+      const opt = document.createElement("option");
+      opt.value = folder.id;
+      opt.textContent = folder.name;
+      moveSelect.appendChild(opt);
+    });
+
+    // Set Existing Value
+    nameInput.value = fileName;
+    moveSelect.value = fileFolderId ?? "";
+
+    // Attach file id to form (for PUT request later)
+    form.dataset.fileId = fileId;
+    openModal(modalId);
+  }
+
+  function openDeleteModal(event, modalId) {
+    const modal = document.getElementById(modalId);
+
+    let card;
+    switch (modalId) {
+      case "modal-folder-delete":
+        card = event.target.closest(".folder-card");
+        // const parentId = card.dataset.parent;
+        break;
+      case "modal-file-delete":
+        card = event.target.closest(".file-card");
+        // const folderId = card.dataset.folder;
+        break;
+      default:
+        break;
+    }
+
+    const id = card.dataset.id;
+    // const name = card.dataset.name;
+
+    modal.dataset.id = id;
+    openModal(modalId);
+  }
+
+  async function submitUploadFile(event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const folderId = form.dataset.folder;
+    console.log("folder ID: ", folderId);
+
+    let url;
+    if (!folderId || isNaN(Number(folderId))) {
+      url = "/files/upload";
+    } else {
+      url = `/files/upload/${folderId}`;
+    }
+
+    const payload = new FormData(event.target);
+
+    for (let p of payload.entries()) console.log(p);
+
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        body: payload,
+      });
+      console.log(res);
+      const data = await res.json();
+      console.log(data);
+      if (!res.ok) {
+        return showModalErrors("modal-file-upload-form", data.errors);
+      }
+
+      closeModal("modal-file-upload-form");
+      location.reload();
+    } catch (err) {
+      console.error(err);
+      alert("Upload failed.");
+    }
+  }
+
+  async function submitEditFolder(event) {
+    event.preventDefault();
+
+    const form = event.target;
     const folderId = form.dataset.folderId;
 
     const payload = {
@@ -447,12 +1030,207 @@
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error(" Failed to update folder");
+      if (!res.ok) throw new Error("Failed to update folder.");
 
       closeModal("modal-folder-edit");
       location.reload();
     } catch (err) {
       res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
+  async function submitEditFile(event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const fileId = form.dataset.fileId;
+
+    const payload = {
+      name: form.name.value.trim(),
+      folderId: form.move.value || null,
+    };
+
+    try {
+      const res = await fetch(`/files/${fileId}/edit`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        //Show server validation erros inside modal
+        return showModalErrors("modal-file-edit", data.errors);
+      }
+
+      closeModal("modal-file-edit");
+      location.reload();
+    } catch (err) {
+      alert("Unexpected error occurred. Try again.");
+    }
+  }
+
+  async function submitDeleteFolder(event) {
+    const modal = event.target.closest(".modal-card");
+    const folderId = modal.dataset.id;
+
+    try {
+      const res = await fetch(`/folders/${folderId}/delete`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+
+      if (!data.success || !res.ok) {
+        throw new Error("Failed to delete folder.");
+      }
+
+      closeModal("modal-folder-delete");
+      alert(`Successfully deleted ${data.folder.name}`);
+      location.reload();
+    } catch (err) {
+      alert("Internal error deleting folder.");
+    }
+  }
+
+  async function submitDeleteFile(event) {
+    const modal = event.target.closest(".modal-card");
+    const fileId = modal.dataset.id;
+
+    try {
+      const res = await fetch(`/files/${fileId}/delete`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+      if (!data.success || !res.ok) {
+        throw new Error("Failed to delete file.");
+      }
+
+      closeModal("modal-file-delete");
+      alert(`Successfully deleted ${data.file.originalName}`);
+      location.reload();
+    } catch (err) {
+      alert("Internal error deleting file.");
+    }
+  }
+
+  async function submitShareFile(event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const modal = form.closest(".modal-card");
+
+    const shareBox = modal.querySelector(".file-share-box");
+    const expireBox = modal.querySelector(".file-expire-box");
+    const submitBtn = modal.querySelector("#share-submit-btn");
+    const expiryInput = form.querySelector("input[name='shareTime']");
+
+    const fileId = form.dataset.fileId;
+    const hasShareLink = form.dataset.hasShareLink === "true";
+    const url = `/files/${fileId}/share`;
+
+    let options = {
+      method: hasShareLink ? "DELETE" : "POST",
+      headers: { "Content-Type": "application/json" },
+    };
+
+    if (!hasShareLink) {
+      options.body = JSON.stringify({
+        shareTime: Number(expiryInput.value),
+      });
+    }
+
+    let res, data;
+
+    try {
+      res = await fetch(url, options);
+      data = await res.json();
+    } catch (err) {
+      showModalErrors("modal-file-share", ["Network error"]);
+      return;
+    }
+
+    if (!res.ok) {
+      showModalErrors(
+        "modal-file-share",
+        data.errors || ["Something went wrong"]
+      );
+      return;
+    }
+
+    if (hasShareLink) {
+      form.dataset.hasShareLink = "false";
+      shareBox.textContent = "—";
+      expireBox.textContent = "—";
+      submitBtn.textContent = "Create";
+      expiryInput.disabled = false;
+    } else {
+      form.dataset.hasShareLink = "true";
+      shareBox.textContent = data.shareUrl;
+      expireBox.textContent = data.expiresAt;
+      submitBtn.textContent = "Revoke";
+      expiryInput.disabled = true;
+    }
+  }
+
+  async function submitShareFolder(event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const modal = form.closest(".modal-card");
+
+    const shareBox = modal.querySelector(".folder-share-box");
+    const expireBox = modal.querySelector(".folder-expire-box");
+    const submitBtn = modal.querySelector("#share-submit-btn");
+    const expiryInput = form.querySelector("input[name='shareTime']");
+
+    const folderId = form.dataset.folderId;
+    const hasShareLink = form.dataset.hasShareLink === "true";
+    const url = `/folders/${folderId}/share`;
+
+    let options = {
+      method: hasShareLink ? "DELETE" : "POST",
+      headers: { "Content-Type": "application/json" },
+    };
+
+    if (!hasShareLink) {
+      options.body = JSON.stringify({
+        shareTime: Number(expiryInput.value),
+      });
+    }
+
+    let res, data;
+
+    try {
+      res = await fetch(url, options);
+      data = await res.json();
+    } catch (err) {
+      showModalErrors("modal-folder-share", ["Network error"]);
+      return;
+    }
+
+    if (!res.ok) {
+      showModalErrors(
+        "modal-folder-share",
+        data.errors || ["Something went wrong"]
+      );
+      return;
+    }
+
+    if (hasShareLink) {
+      form.dataset.hasShareLink = "false";
+      shareBox.textContent = "—";
+      expireBox.textContent = "—";
+      submitBtn.textContent = "Create";
+      expiryInput.disabled = false;
+    } else {
+      form.dataset.hasShareLink = "true";
+      shareBox.textContent = data.shareUrl;
+      expireBox.textContent = data.expiresAt;
+      submitBtn.textContent = "Revoke";
+      expiryInput.disabled = true;
     }
   }
 </script>

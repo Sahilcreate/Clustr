@@ -52,4 +52,38 @@ async function getFolderPath(userId, folderId) {
   return path.reverse();
 }
 
-module.exports = { getFolderPath };
+async function getSharedFolderPath(rootId, nodeId) {
+  const path = [];
+  let currentId = nodeId;
+
+  while (true) {
+    const folder = await prisma.folder.findUnique({
+      where: {
+        id: currentId,
+      },
+      select: {
+        id: true,
+        name: true,
+        parentId: true,
+      },
+    });
+
+    // safety
+    if (!folder) break;
+
+    path.push({
+      id: folder.id,
+      name: folder.name,
+    });
+
+    if (folder.id === rootId) break;
+
+    currentId = folder.parentId;
+
+    // prevent infinite loops
+    if (!currentId) break;
+  }
+  return path.reverse();
+}
+
+module.exports = { getFolderPath, getSharedFolderPath };

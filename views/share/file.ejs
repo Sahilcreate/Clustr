@@ -1,0 +1,38 @@
+<% const {file, token} = content %>
+
+<div class="flex flex-col justify-center align-middle p-6 w-full">
+  <div class="flex justify-center font-semibold w-full text-xl">
+    Shared File
+  </div>
+  <div class="space-y-1">
+    <div class="flex gap-2">
+      <span class="font-semibold text-green-600">Name:</span>
+      <span id="file-info-name"><%= file.nameWithoutExt %></span>
+    </div>
+    <div class="flex gap-2">
+      <span class="font-semibold text-green-600">Size:</span>
+      <span id="file-info-size"><%= file.size %></span>
+    </div>
+    <div class="flex gap-2">
+      <span class="font-semibold text-green-600">Mime Type:</span>
+      <span id="file-info-mime"><%= file.mimeType %></span>
+    </div>
+    <div class="flex gap-2">
+      <span class="font-semibold text-green-600">Created At:</span>
+      <span id="file-info-created"><%= file.createdAt %></span>
+    </div>
+    <div class="flex gap-2">
+      <span class="font-semibold text-green-600">Updated At:</span>
+      <span id="file-info-updated"><%= file.updatedAt%></span>
+    </div>
+  </div>
+  <div class="file-info-btns mt-4">
+    <a href="/share/<%= token %>/file/<%= file.id %>/download">
+      <button
+        class="border rounded py-1 px-4 border-gray-500 font-semibold hover:text-orange-500 hover:border-orange-500 hover:bg-orange-50 cursor-pointer"
+      >
+        Download
+      </button>
+    </a>
+  </div>
+</div>

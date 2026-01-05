@@ -2,6 +2,9 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { getFolderPath } = require("../utils/pathHelpers");
 const { getAllDescendantIds } = require("../utils/descendantHelper");
+const { removeExt } = require("../utils/removeExt");
+const crypto = require("crypto");
+require("dotenv").config();
 
 // async function listRootItems(req, res) {
 //   try {
@@ -92,6 +95,10 @@ async function listDashboardItems(req, res) {
         folderId: folderId,
       },
     });
+    files = files.map((f) => ({
+      ...f,
+      nameWithoutExt: removeExt(f.originalName),
+    }));
 
     const breadcrumb = await getFolderPath(req.user.id, folderId);
 
@@ -250,7 +257,7 @@ async function putFolderEdit(req, res) {
       },
     });
 
-    res.json({
+    return res.json({
       success: true,
       folder: updatedFolder,
     });
@@ -258,6 +265,116 @@ async function putFolderEdit(req, res) {
     console.error("putFolderEdit error: ", err);
     res.status(500).json({ error: "Internal server error" });
   }
+}
+
+async function deleteFolder(req, res) {
+  const folderId = Number(req.params.folderId);
+  if (isNaN(folderId)) {
+    return res.status(400).json({ error: "Invalid folder id" });
+  }
+
+  const folder = await prisma.folder.findFirst({
+    where: {
+      id: folderId,
+      userId: req.user.id,
+    },
+  });
+
+  if (!folder) {
+    return res.status(400).json({ error: "No such folder." });
+  }
+
+  const deletedFolder = await prisma.folder.delete({
+    where: { id: folderId },
+  });
+
+  return res.json({
+    success: true,
+    folder: deletedFolder,
+  });
+}
+
+async function getFolderShareInfo(req, res, next) {
+  const folder = req.folder;
+  const shareLink = req.shareLink;
+
+  // console.log("getFolderShareInfo", file, shareLink);
+
+  if (!shareLink || shareLink.revoked || shareLink.expiresAt < new Date()) {
+    return res.json({
+      success: true,
+      token: null,
+    });
+  }
+
+  return res.json({
+    success: true,
+    token: shareLink.token,
+    shareUrl: `${process.env.APP_URL}/share/${shareLink.token}/folder/${folder.id}`,
+    expiresAt: shareLink.expiresAt.toUTCString(),
+  });
+}
+
+async function postFolderShare(req, res, next) {
+  const folderId = Number(req.params.folderId);
+  const shareTime = Number(req.body.shareTime);
+
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + shareTime);
+
+  const token = crypto.randomBytes(32).toString("hex");
+
+  const shareUrl = `${process.env.APP_URL}/share/${token}/folder/${folderId}`;
+
+  const existing = await prisma.shareLink.findFirst({
+    where: { folderId },
+  });
+
+  let shareLink;
+
+  if (existing) {
+    shareLink = await prisma.shareLink.update({
+      where: { id: existing.id },
+      data: {
+        token,
+        expiresAt,
+        revoked: false,
+      },
+    });
+  } else {
+    shareLink = await prisma.shareLink.create({
+      data: {
+        token,
+        expiresAt,
+        folderId,
+      },
+    });
+  }
+
+  return res.status(201).json({
+    success: true,
+    shareUrl,
+    expiresAt: shareLink.expiresAt.toUTCString(),
+  });
+}
+
+async function deleteFolderShare(req, res) {
+  const folderId = Number(req.params.folderId);
+
+  await prisma.shareLink.updateMany({
+    where: {
+      folderId,
+      revoked: false,
+    },
+    data: {
+      revoked: true,
+    },
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: "Share link revoked successfully",
+  });
 }
 
 module.exports = {
@@ -268,4 +385,9 @@ module.exports = {
   getAllFolderDetails,
   getFolderDetails,
   putFolderEdit,
+  deleteFolder,
+
+  getFolderShareInfo,
+  postFolderShare,
+  deleteFolderShare,
 };

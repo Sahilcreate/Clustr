@@ -1,0 +1,210 @@
+<% const {rootFolder, targetFolder, subFolders, subFiles, breadcrumb, token} =
+content %>
+
+<div class="max-w-4xl mx-auto p-6">
+  <!-- TOP BAR -->
+  <div class="flex items-center justify-between mb-6">
+    <!-- Breadcrumb -->
+    <nav class="text-gray-700 text-sm font-mono">
+      / <% breadcrumb.forEach((b, idx) => { %>
+      <a
+        href="http://localhost:3000/share/<%= token %>/folder/<%= b.id %>"
+        class="hover:text-blue-600 hover:underline"
+      >
+        <%= b.name %>
+      </a>
+      <% if (idx < breadcrumb.length - 1) { %>
+      <span class="mx-1 text-gray-500">/</span>
+      <% } %> <% }) %>
+    </nav>
+  </div>
+
+  <!-- BACK BUTTON (only when inside folder) -->
+  <% if (rootFolder.id !== targetFolder.id) { %>
+  <div
+    class="flex justify-between items-center border border-gray-200 bg-gray-100 px-4 py-3 rounded-md shadow mb-4"
+  >
+    <a
+      href="http://localhost:3000/share/<%= token %>/folder/<%= targetFolder.parentId %>"
+      class="font-semibold text-lg text-gray-700 hover:underline flex gap-2 align-middle"
+    >
+      <%- include('../partials/icons/return.ejs') %>
+      <span>Return</span>
+    </a>
+  </div>
+  <% } %>
+
+  <!-- Folder + File List -->
+  <div>
+    <!-- FOLDERS -->
+    <% subFolders.forEach(folder => { %>
+    <div
+      class="folder-card flex justify-between items-center px-4 py-3 mb-2 rounded bg-white hover:bg-blue-50 hover:shadow"
+      data-id="<%= folder.id %>"
+      data-name="<%= folder.name %>"
+      data-parent="<%= folder.parentId %>"
+    >
+      <a
+        href="http://localhost:3000/share/<%= token %>/folder/<%= folder.id %>"
+        class="flex items-center gap-3 text-gray-800 font-medium"
+      >
+        <span class="text-2xl">
+          <%- include('../partials/icons/folder') %>
+        </span>
+        <span class="hover:text-blue-600"><%= folder.name %></span>
+      </a>
+    </div>
+    <% }) %>
+
+    <!-- FILES -->
+    <% subFiles.forEach(file => { %>
+    <div
+      class="file-card flex justify-between items-center border-b-2 border-b-green-600 px-4 py-3 mb-2 hover:bg-green-50"
+      data-id="<%= file.id %>"
+      data-name="<%= file.nameWithoutExt %>"
+      data-folder="<%= file.folderId %>"
+      data-size="<%= file.size %>"
+      data-mime="<%= file.mimeType %>"
+      data-created="<%= file.createdAt %>"
+      data-updated="<%= file.updatedAt %>"
+      data-token="<%= token %>"
+    >
+      <div
+        class="flex items-center gap-3 text-gray-800 hover:cursor-pointer"
+        onclick="openFileInfoModal(event, 'modal-file-info')"
+      >
+        <span class="text-2xl"> <%- include('../partials/icons/file') %> </span>
+        <span class="hover:text-green-600"><%= file.nameWithoutExt %></span>
+        <span class="border rounded text-xs py-0.5 px-1 bg-gray-50 shadow"
+          ><%= file.mimeType %></span
+        >
+      </div>
+    </div>
+    <% }) %>
+  </div>
+</div>
+
+<div
+  id="modal-file-info"
+  class="modal-card fixed hidden inset-0 bg-black/40 items-center justify-center"
+  onclick="outsideClose(event, 'modal-file-info')"
+>
+  <div
+    class="bg-white h-full p-6 w-1/2 min-w-xl fixed top-0 right-0 shadow-lg animate-popup"
+    onclick="event.stopPropagation()"
+  >
+    <div class="modal-errors mb-4"></div>
+    <h2
+      class="file-card text-2xl font-bold flex gap-2 align-middle justify-between mb-6 border-b-2 border-b-black text-green-600"
+    >
+      <span>File Info</span>
+      <div class="file-info-btns flex gap-1">
+        <a class="download-link px-1 py-1 text-sm">
+          <%- include('../partials/icons/download') %>
+        </a>
+      </div>
+    </h2>
+    <div class="space-y-2">
+      <div class="flex gap-2">
+        <span class="font-semibold text-green-600">Name:</span>
+        <span id="file-info-name">whatever</span>
+      </div>
+      <div class="flex gap-2">
+        <span class="font-semibold text-green-600">Size:</span>
+        <span id="file-info-size">very big</span>
+      </div>
+      <div class="flex gap-2">
+        <span class="font-semibold text-green-600">Mime Type:</span>
+        <span id="file-info-mime">giphy-flify</span>
+      </div>
+      <div class="flex gap-2">
+        <span class="font-semibold text-green-600">Created At:</span>
+        <span id="file-info-created">Long Ago...</span>
+      </div>
+      <div class="flex gap-2">
+        <span class="font-semibold text-green-600">Updated At:</span>
+        <span id="file-info-updated">that too long ago</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function bytesToMb(bytes) {
+    if (typeof bytes !== "number" || isNaN(bytes) || bytes < 0) {
+      return "0 MB";
+    }
+
+    const megabytes = bytes / (1024 * 1024);
+
+    return `${parseFloat(megabytes.toFixed(2))} MB`;
+  }
+
+  function dateToString(dateString) {
+    console.log("date: ", dateString, typeof dateString);
+
+    const date = new Date(dateString);
+
+    return date.toUTCString();
+  }
+
+  function openModal(id) {
+    const modal = document.getElementById(id);
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+    modal.querySelector("div").classList.remove("animate-popdown");
+    modal.querySelector("div").classList.add("animate-popup");
+  }
+
+  function closeModal(id) {
+    const modal = document.getElementById(id);
+    const box = modal.querySelector("div");
+    box.classList.remove("animate-popup");
+    box.classList.add("animate-popdown");
+
+    setTimeout(() => modal.classList.add("hidden"), 120);
+  }
+
+  function outsideClose(e, id) {
+    if (e.target.id === id) closeModal(id);
+  }
+
+  async function openFileInfoModal(event, modalId) {
+    const modal = document.getElementById(modalId);
+    const errorBox = modal.querySelector(".modal-errors");
+    const fileInfoName = modal.querySelector("#file-info-name");
+    const fileInfoSize = modal.querySelector("#file-info-size");
+    const fileInfoMime = modal.querySelector("#file-info-mime");
+    const fileInfoCreated = modal.querySelector("#file-info-created");
+    const fileInfoUpdated = modal.querySelector("#file-info-updated");
+    const fileInfoShare = modal.querySelector("#file-info-share");
+    const newFileCard = modal.querySelector(".file-card");
+    const downloadLink = modal.querySelector(".download-link");
+
+    const fileCard = event.target.closest(".file-card");
+    const fileId = fileCard.dataset.id;
+    const fileName = fileCard.dataset.name;
+    const fileFolderId = fileCard.dataset.folder;
+    const fileSize = fileCard.dataset.size;
+    const fileMime = fileCard.dataset.mime;
+    const fileCreated = fileCard.dataset.created;
+    const fileUpdated = fileCard.dataset.updated;
+    downloadLink.href = `/share/${fileCard.dataset.token}/file/${fileCard.dataset.id}/download`;
+
+    errorBox.innerHTML = "";
+
+    console.log(fileId);
+
+    openModal(modalId);
+
+    newFileCard.dataset.id = fileId;
+    newFileCard.dataset.name = fileName;
+    newFileCard.dataset.folder = fileFolderId;
+
+    fileInfoName.textContent = fileName;
+    fileInfoSize.textContent = bytesToMb(Number(fileSize));
+    fileInfoMime.textContent = fileMime;
+    fileInfoCreated.textContent = dateToString(String(fileCreated));
+    fileInfoUpdated.textContent = dateToString(String(fileUpdated));
+  }
+</script>

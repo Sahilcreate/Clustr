@@ -34,6 +34,7 @@ authRouter.post(
     successRedirect: "/folders",
     failureRedirect: "/auth/login",
     failureFlash: true,
+    successFlash: true,
   })
 );
 

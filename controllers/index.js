@@ -1,24 +1,18 @@
-// const {
-//   getFolderById,
-//   getFolderChildren,
-//   postRootFolder,
-//   postSubfolder,
-//   putFolder,
-//   deleteFolder,
-// } = require("./api/folder");
 const {
   getRegister,
   postRegister,
   getLogin,
-  // postLogin,
   logout,
 } = require("./authController");
 const {
   uploadFile,
-  uploadMultipleFiles,
   getFileDetails,
   downloadFile,
   deleteFile,
+  putFileEdit,
+  postFileShare,
+  deleteFileShare,
+  getFileShareInfo,
 } = require("./fileController");
 const {
   listDashboardItems,
@@ -26,38 +20,47 @@ const {
   getFolderDetails,
   getAllFolderDetails,
   putFolderEdit,
+  deleteFolder,
+  getFolderShareInfo,
+  postFolderShare,
+  deleteFolderShare,
 } = require("./folderController");
-// const { getDashboard } = require("./dashboardController");
-// const { getChildren } = require("./folderController");
 const { indexController } = require("./indexController");
+const {
+  viewSharedFile,
+  viewSharedFolder,
+  downloadSharedFile,
+} = require("./shareController");
 
 const controllers = {
   indexController,
   getRegister,
   postRegister,
   getLogin,
-  // postLogin,
   logout,
-  // getDashboard,
-  // getChildren,
-  // getFolderById,
-  // getFolderChildren,
-  // postRootFolder,
-  // postSubfolder,
-  // putFolder,
-  // deleteFolder,
-  // listRootItems,
-  // listFolderItems,
+
   createFolder,
   listDashboardItems,
   getAllFolderDetails,
   getFolderDetails,
   putFolderEdit,
+  deleteFolder,
+  getFolderShareInfo,
+  postFolderShare,
+  deleteFolderShare,
+
   uploadFile,
-  uploadMultipleFiles,
   getFileDetails,
   downloadFile,
   deleteFile,
+  putFileEdit,
+  getFileShareInfo,
+  postFileShare,
+  deleteFileShare,
+
+  viewSharedFile,
+  viewSharedFolder,
+  downloadSharedFile,
 };
 
 module.exports = { controllers };

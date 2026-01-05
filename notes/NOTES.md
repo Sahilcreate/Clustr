@@ -9,3 +9,5 @@
 ## 03-12-2025
 
 nothing was making sense. was focusing more on how to make a sidebar work than what really matters. starting over from tomorrow with proper commit history.
+
+## 04-12-2025

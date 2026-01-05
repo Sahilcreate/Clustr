@@ -10,8 +10,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 //======================================
@@ -56,8 +57,8 @@ model Folder {
 model File {
   id           Int      @id @default(autoincrement())
   originalName String // original file name uploaded by user
-  storedName   String //filename saved on disk or cloud bucked
-  path         String // local filesystem path OR cloud bucked path
+  bucket       String
+  objectKey    String
   size         Int
   mimeType     String?
   url          String?
@@ -77,10 +78,11 @@ model File {
 }
 
 model ShareLink {
-  id        String   @id @default(uuid())
+  id        Int      @id @default(autoincrement())
   token     String   @unique
   expiresAt DateTime
   createdAt DateTime @default(now())
+  revoked   Boolean  @default(false)
 
   // File sharing  (one share link per file)
   file   File? @relation(fields: [fileId], references: [id], onDelete: Cascade)

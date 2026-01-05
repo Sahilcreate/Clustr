@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles/build.css" />
+  </head>
+  <body class="relative min-h-screen flex flex-col bg-gray-100">
+    <%- include('../partials/header') %>
+    <div class="main flex-grow">
+      <div class="content-wrapper">
+        <% const contentType = { invalid: "../share/invalid", file:
+        "../share/file", folder: "../share/folder" }[content.type]; %> <%-
+        include(contentType, { content }) %>
+      </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+
+    <script>
+      // Auto hide flash messages after 3 seconds
+      setTimeout(() => {
+        document.querySelectorAll(".flash-message").forEach((el) => {
+          el.classList.add("opacity-0", "transition-opacity", "duration-500");
+          setTimeout(() => el.remove(), 600);
+        });
+      }, 3000);
+    </script>
+  </body>
+</html>

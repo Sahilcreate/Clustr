@@ -28,6 +28,35 @@ async function getAllDescendantIds(folderId, userId) {
   return descendants;
 }
 
+async function isDescendant(rootId, nodeId) {
+  if (!nodeId) return false;
+  if (rootId === nodeId) return true;
+
+  let currentId = nodeId;
+
+  while (currentId) {
+    const folder = await prisma.folder.findUnique({
+      where: {
+        id: currentId,
+      },
+      select: {
+        parentId: true,
+      },
+    });
+
+    if (!folder) return false;
+
+    if (folder.parentId === rootId) {
+      return true;
+    }
+
+    currentId = folder.parentId;
+  }
+
+  return false;
+}
+
 module.exports = {
   getAllDescendantIds,
+  isDescendant,
 };
