@@ -45,11 +45,17 @@ fileRouter.get(
 );
 fileRouter.put(
   "/:fileId/edit",
+  validateFile,
   editFileValidators,
   handleValidationErrors,
   controllers.putFileEdit
 );
-fileRouter.delete("/:fileId/delete", controllers.deleteFile);
+fileRouter.delete(
+  "/:fileId/delete",
+  validateFile,
+  handleValidationErrors,
+  controllers.deleteFile
+);
 
 fileRouter.get(
   "/:fileId/share",

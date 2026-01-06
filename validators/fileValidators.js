@@ -1,8 +1,7 @@
 const { body, param } = require("express-validator");
 const path = require("path");
 const { validateIdParam } = require("./common");
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const { prisma } = require("../lib/prismaClient");
 
 // async function validateFile(req, res ,next) {
 //   const fileId = Number(req.params.fileId);
@@ -69,8 +68,6 @@ function isSafeExtension(filename) {
 }
 
 const editFileValidators = [
-  validateIdParam("fileId"),
-
   body("name")
     .trim()
     .notEmpty()
@@ -90,11 +87,25 @@ const editFileValidators = [
 
   body("folderId")
     .optional({ values: "falsy" })
-    .custom((value) => {
-      if (value === "null" || value === "") return true;
+    .custom(async (folderId, { req }) => {
+      if (folderId === "null" || folderId === "") return true;
 
-      const n = Number(value);
+      const n = Number(folderId);
       if (isNaN(n)) throw new Error("Invalid folder id");
+
+      req.body.folderId = n;
+
+      const newFolder = await prisma.folder.findFirst({
+        where: {
+          userId: req.user.id,
+          id: n,
+        },
+      });
+
+      if (!newFolder) {
+        throw new Error("No such folder found.");
+      }
+
       return true;
     }),
 ];
